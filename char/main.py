@@ -7,15 +7,10 @@ train_datagen = ImageDataGenerator(rescale=1./255)
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 train_generator = train_datagen.flow_from_directory(
-        'C:/Users/Minec/OneDrive/Documents/Coding Projects/Tensoflow course/char/Resized',
+        'char/Resized',
         target_size=(28, 28),
         batch_size=32,
-        class_mode='categorical')
-
-validation_generator = test_datagen.flow_from_directory(
-        'C:/Users/Minec/OneDrive/Documents/Coding Projects/Tensoflow course/char/Resized',
-        target_size=(28, 28),
-        batch_size=32,
+        color_mode='grayscale',
         class_mode='categorical')
 
 # Define the model architecture
@@ -28,6 +23,9 @@ model = keras.models.Sequential([
     keras.layers.MaxPooling2D((2, 2)),
     keras.layers.Flatten(),
     keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dropout(0.5),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dropout(0.5),
     keras.layers.Dense(62, activation='softmax')
 ])
 
@@ -40,9 +38,7 @@ model.compile(loss='categorical_crossentropy',
 model.fit_generator(
         train_generator,
         steps_per_epoch=train_generator.samples//train_generator.batch_size,
-        epochs=10,
-        validation_data=validation_generator,
-        validation_steps=validation_generator.samples//validation_generator.batch_size)
+        epochs=50)
 
 # Save the model to a file
-model.save('tsc/char_classifier.h5')
+model.save('char/char_classifier.h5')
